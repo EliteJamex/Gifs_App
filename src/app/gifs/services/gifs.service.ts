@@ -15,7 +15,9 @@ export class GifsService {
   private servicesUrl: string = 'https://api.giphy.com/v1/gifs';
 
   /*Toca llamar esta libreria de Anglar Para recibir peticiones por Request*/
-  constructor(private http: HttpClient){}
+  constructor(private http: HttpClient){
+    this.loadLocalStorage();
+  }
 
   get tagsHistory(){
     return [...this._tagsHistory];
@@ -45,5 +47,17 @@ export class GifsService {
     }
     this._tagsHistory.unshift(tag);
     this._tagsHistory = this._tagsHistory.splice(0,10);
+    this.saveLocalStorage();
+  }
+
+  private saveLocalStorage():void{
+    //Guardar item en Local Storage, y luego transformar un objeto en un string convertible
+    localStorage.setItem('history',JSON.stringify(this._tagsHistory));
+  }
+
+  private loadLocalStorage():void{
+    if(!localStorage.getItem('history'))return;
+    this._tagsHistory = JSON.parse(localStorage.getItem('history')!);
+    this.searchTag(this._tagsHistory[0]);
   }
 }
